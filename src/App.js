@@ -1,36 +1,73 @@
-import logo from './logo.svg';
+// import React from "react";
 import './App.css';
 import Header from './MyComponents/Header';
 import Footer from './MyComponents/Footer';
-import Todos from './MyComponents/Todos';
+import{ Todos} from './MyComponents/Todos';
+import AddTodo from './MyComponents/AddTodo';
+import { useState, useEffect } from 'react';
+import About from './MyComponents/About';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route
+} from "react-router-dom";
+
 
 function App() {
-  const todos = [
-    {
-      sno: 1,
-      title: "Go to the Market",
-      desc: "You need to go to the market to buy vegetables",
-    },
-    {
-      sno: 2,
-      title: "Go to the Mall",
-      desc: "You need to go to the mall to buy clothes",
-    },
-    {
-      sno: 3,
-      title: "Go to the Park",
-      desc: "You need to go to the park for a walk",
-    },
-  ];
+  let initTodo;
+  if (localStorage.getItem("todos") === null) {
+    initTodo = [];
+  }
+  else {
+    initTodo = JSON.parse(localStorage.getItem("todos"));
+  }
+
+
+  const onDelete = (todo) => {
+    setTodos(todos.filter((e) => e !==todo));
+
+    console.log("Deleted successfully", todos);
+    localStorage.setItem("todos", JSON.stringify(todos));
+  }
+  const addTodo = (title, desc) => {
+    console.log("Adding todo", title, desc)
+    let sno;
+    if(todos.length ===0){
+      sno=0;
+    }else {
+      sno = todos[todos.length - 1].sno + 1;
+    }
+    const myTodo = {
+      sno: sno,
+      title: title,
+      desc: desc
+    }
+    setTodos([...todos, myTodo]);
+    console.log(myTodo);
+  }
+
+  const [todos, setTodos] = useState(initTodo);
+
+  useEffect(() => {
+    localStorage.setItem("todos", JSON.stringify(todos));
+  }, [todos]);
 
   return (
     <>
-    <Header title="My Todos List" searchBar={false}/>
-      <Todos todos={todos} />
-      <Footer />
+      <Router>
+        <Header title="My Todos List" searchBar={false} />
+        <Routes>
+          <Route exact path="/" element={
+              <>
+                <AddTodo addTodo={addTodo} />
+                <Todos todos={todos} onDelete={onDelete} />
+              </>
+           } />
+          <Route exact path="/about" element={<About />} />
+        </Routes>
+        <Footer />
+      </Router>
     </>
-
   );
 }
-
 export default App;

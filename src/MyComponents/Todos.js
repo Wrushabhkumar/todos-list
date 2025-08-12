@@ -1,17 +1,17 @@
-import React from 'react'
-import TodoItem from './TodoItem'
+// import React from 'react'
+import {TodoItem} from './TodoItem'
 
 
-const Todos = (props) => {
+export const Todos = (props) => {
   return (
-    <div>
-      <div className="container">
-        <h3>Todos List  </h3> 
-        <TodoItem todo={props.todos[0]}/>
+    <div className="container" style={{ minHeight: "70vh", margin: "60px auto" }}>
+      <h3 className="my-3">Todos List</h3> <hr/>
+      {props.todos.length===0?( "No Todos to display" ):
+        props.todos.map((todo) => {
 
-      </div>
+          return ( <TodoItem todo={todo} key={todo.sno} onDelete={props.onDelete} /> )
+        })}
     </div>
   )
 }
-
 export default Todos
